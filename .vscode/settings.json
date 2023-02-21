@@ -1,0 +1,4 @@
+{
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "csharp.semanticHighlighting.enabled": true
+}
