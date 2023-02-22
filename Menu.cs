@@ -9,20 +9,20 @@ interface MenuUI<T> where T : Node<T> {
 
 class MenuSK : MenuUI<NodeSK> {
 
-    public Pose pos;
+    public Pose pose;
     public NodeSK? nodeSelected;
     public Editor[] editors = { };
     bool editorActive = false;
     float windowWidth = 0.4f;
     float windowHeight = 0.4f;
     public void Open(NodeSK n) {
-        pos.position = n.pos.position + n.pos.orientation.Rotate(new Vec3(-windowWidth / 2f - 0.1f, 0.0f, 0.0f));
+        pose.position = n.pose.position + n.pose.orientation.Rotate(new Vec3(-windowWidth / 2f - 0.1f, 0.0f, 0.0f));
         nodeSelected = n;
     }
 
     public void Step() {
-        pos.orientation = Quat.LookAt(pos.position, Input.Head.position);
-        UI.WindowBegin(nodeSelected == null ? "Open some node" : "Node info", ref pos, new Vec2(windowWidth, windowHeight));
+        pose.orientation = Quat.LookAt(pose.position, Input.Head.position);
+        UI.WindowBegin(nodeSelected == null ? "Open some node" : "Node info", ref pose, new Vec2(windowWidth, windowHeight));
         DrawNode();
         UI.WindowEnd();
     }
