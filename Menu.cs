@@ -91,9 +91,8 @@ class MenuSK : MenuUI<NodeSK> {
         if (nodeSelected.actualized) {
             UI.HSeparator();
             if (nodeSelected.parent != null) {
-                bool deleted = UI.Button("Delete");
-                if (deleted) {
-                    nodeSelected.parent.children.Remove(nodeSelected);
+                if (UI.Button("Delete")) {
+                    nodeSelected.Delete();
                     nodeSelected = null;
                     return;
                 }

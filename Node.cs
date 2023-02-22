@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using StereoKit;
+using System;
 
 
 class Node<T> where T : Node<T> {
@@ -7,6 +8,21 @@ class Node<T> where T : Node<T> {
     public List<Node<T>> children = new List<Node<T>>();
     public T? parent;
     public bool actualized = false;
+
+    public void Delete() {
+        Delete(deleteSelf: true);
+    }
+    void Delete(bool deleteSelf = true) {
+        // Can I do this if the invalid argument is `this`? Is an assert better?
+        if (parent == null)
+            throw new ArgumentException();
+        foreach (Node<T> child in children) {
+            child.Delete(deleteSelf: false);
+        }
+        if (deleteSelf)
+            parent.children.Remove(this);
+        return;
+    }
 }
 
 class NodeSK : Node<NodeSK> {
