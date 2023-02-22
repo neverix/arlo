@@ -10,11 +10,15 @@ class Node<T> where T : Node<T> {
 
 
 class VisualNode : Node<VisualNode> {
-    public Vec3 pos;
+    public Pose pos;
+    static Mesh mesh = Mesh.GenerateSphere(0.1f);
 
+    static VisualNode() { }
     public void Step() {
-        Mesh.Sphere.Draw(Material.Unlit, Matrix.S(0.1f) * Matrix.T(pos));
+        UI.HandleBegin("sphere", ref pos, mesh.Bounds, drawHandle: false, UIMove.FaceUser);
+        mesh.Draw(Material.Unlit, Matrix.Identity);
         if (parent != null)
-            Lines.Add(pos, parent.pos, new Color32 { r = 55, g = 55, b = 55, a = 255 }, U.cm);
+            Lines.Add(new Vec3(), parent.pos.position - pos.position, new Color32 { r = 55, g = 55, b = 55, a = 255 }, U.cm);
+        UI.HandleEnd();
     }
 }
