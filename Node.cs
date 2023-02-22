@@ -20,12 +20,17 @@ class NodeSK : Node<NodeSK> {
             AddBaby();
         }
     }
-    public void AddBaby() {
+    void AddBaby() {
         children.Add(new NodeSK(actualized: false) {
             pos = new Pose(pos.position + pos.orientation.Rotate(new Vec3(0.0f, 0.0f, 0.2f)), pos.orientation),
             parent = this,
             text = "... Nothing here yet"
         });
+    }
+    public void Actualize(string text) {
+        this.text = text;
+        actualized = true;
+        AddBaby();
     }
     public void Step(MenuUI<NodeSK> menu) {
         bool isHandled = UI.HandleBegin("Node", ref pos, mesh.Bounds, drawHandle: false, UIMove.FaceUser);

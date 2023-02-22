@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using StereoKit;
-using System;
 
 
 interface MenuUI<T> where T : Node<T> {
@@ -11,6 +11,8 @@ class MenuSK : MenuUI<NodeSK> {
 
     public Pose pos;
     public NodeSK? nodeSelected;
+    public Editor[] editors = { };
+    bool editorActive = false;
     float windowWidth = 0.4f;
     float windowHeight = 0.4f;
     public void Open(NodeSK n) {
@@ -29,15 +31,8 @@ class MenuSK : MenuUI<NodeSK> {
         if (nodeSelected == null) {
             return;
         }
-        if (!nodeSelected.actualized) {
-            UI.Button("Speak up text");
-            UI.SameLine();
-            UI.Button("Type text");
-            UI.SameLine();
-            UI.Button("Generate");
-        }
-        UI.Text("Text");
-        UI.HSeparator();
+
+        // UI.Text("Text");
         List<string> textChunks = new List<string> { nodeSelected.text };
         NodeSK node = nodeSelected;
         while (node.parent != null) {
@@ -68,6 +63,31 @@ class MenuSK : MenuUI<NodeSK> {
         //     gutter = 10 * Units.mm2m
         // };
         UI.Text(string.Join("", textChunks));
+        UI.HSeparator();
+
+        if (!nodeSelected.actualized) {
+            bool syncEditorActive = editorActive;
+            if (syncEditorActive) {
+                TextStyle ts = Text.MakeStyle(Default.Font, TextStyle.Default.CharHeight, new Color { r = 55, g = 55, b = 55, a = 255 });
+                UI.PushTextStyle(ts);
+            }
+            foreach (var (editor, index) in editors.WithIndex()) {
+                if (index > 0) UI.SameLine();
+                if (UI.Button(editor.name)) {
+                    if (editorActive) continue;
+                    editorActive = true;
+                    editor.Edit(string.Join("", textChunks), (string newText) => {
+                        nodeSelected.text = newText;
+                    }).ContinueWith(text => {
+                        editorActive = false;
+                        nodeSelected.Actualize(text.Result);
+                    });
+                }
+            }
+            if (syncEditorActive) {
+                UI.PopTextStyle();
+            }
+        }
         if (nodeSelected.actualized) {
             UI.HSeparator();
             if (nodeSelected.parent != null) {
@@ -80,4 +100,12 @@ class MenuSK : MenuUI<NodeSK> {
             }
         }
     }
+}
+
+
+// Credit: https://stackoverflow.com/a/39997157
+// Technically unnecessary but more comfortable
+public static class EnumExtension {
+    public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
+       => self.Select((item, index) => (item, index));
 }

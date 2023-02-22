@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OpenAI" Version="1.5.0" />
     <PackageReference Include="StereoKit" Version="0.3.6" />
   </ItemGroup>
 
