@@ -48,7 +48,7 @@ class NodeSK : Node<NodeSK> {
         NodeSK node = new NodeSK(actualized: false) {
             pose = new Pose(pose.position + offset, pose.orientation),  // orientation.Rotate(new Vec3(-0.01f, 0.0f, 0.0f)), orientation),
             parent = this,
-            text = "... Nothing here yet"
+            text = ""
         };
         children.Add(node);
         return node;
