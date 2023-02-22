@@ -13,7 +13,7 @@ class Program {
             Environment.Exit(1);
         // Pose windowPose = new Pose(0.0f, 0.0f, -0.4f, Quat.LookDir(0, 0, 1));
         NodeSK node = new NodeSK(new Pose(0.0f, 0.0f, -0.4f, Quat.LookDir(0, 0, 1))) { text = "Hi" };
-        MenuSK menu = new MenuSK { pos = new Pose(0.0f, 0.2f, -0.4f, Quat.LookDir(0, 0, 1)) };
+        MenuSK menu = new MenuSK { pos = new Pose(0.3f, 0.2f, -0.4f, Quat.LookDir(0, 0, 1)) };
 
         SK.Run(() => {
             // UI.WindowBegin("Main window", ref windowPose, new Vec2(50, 0) * U.cm, UIWin.Normal);
