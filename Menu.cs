@@ -69,7 +69,7 @@ class MenuSK : MenuUI<NodeSK> {
         // };
         UI.Text(string.Join("", textChunks));
 
-        if (!nodeSelected.actualized) {
+        if (nodeSelected.children.Where(c => c.actualized).Count() == 0) {
             UI.HSeparator();
             bool syncEditorActive = editorActive;
             if (syncEditorActive) {
@@ -85,7 +85,7 @@ class MenuSK : MenuUI<NodeSK> {
                         nodeSelected.text = newText;
                     }).ContinueWith(text => {
                         editorActive = false;
-                        nodeSelected.Actualize(text.Result);
+                        nodeSelected = nodeSelected.Actualize(text.Result);
                     });
                 }
             }
