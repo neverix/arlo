@@ -17,17 +17,20 @@ class VUI : Editor {
     public void DrawUI() {
         if (isActive) {
             UI.HSeparator();
-            if (UI.Button("Stop")) {
-                isActive = false;
+            if (!Microphone.IsRecording) {
+                UI.Label("Starting...");
+                return;
             }
+            if (UI.Button("Stop"))
+                isActive = false;
         }
     }
 
     public async Task<string> Edit(string initialText, Action<string> setText) {
+        isActive = true;
         await Task.Run(() => Microphone.Start());
         samples.Clear();
         float[] buf = new float[24000];
-        isActive = true;
         while (isActive) {
             int unreadSamples = Microphone.Sound.UnreadSamples;
             int readSamples = Microphone.Sound.ReadSamples(ref buf);
