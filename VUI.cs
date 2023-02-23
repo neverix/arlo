@@ -37,7 +37,6 @@ class VUI : Editor {
         }
         Microphone.Stop();
         string result = await TranscribeAudio();
-        Console.WriteLine(result);
         return result;
     }
 
@@ -86,10 +85,10 @@ class MyWhisperAPIClient {
             response = await client.PostAsync(apiEndpoint, formData);
         }
         catch (HttpRequestException) {
-            return "Looks like the audio transcription server isn't configured properly. Check it and rerun.";
+            return " Looks like the audio transcription server isn't configured properly. Check it and rerun.";
         }
         if (!response.IsSuccessStatusCode) {
-            return "The audio transcription server is responding with an error. Check it and rerun.";
+            return " The audio transcription server is responding with an error. Check it and rerun.";
             // throw new HttpRequestException();
         }
         JsonNode node = JsonNode.Parse(await response.Content.ReadAsStreamAsync())!;
