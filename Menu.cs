@@ -92,6 +92,9 @@ class MenuSK : MenuUI<NodeSK> {
             if (syncEditorActive) {
                 UI.PopTextStyle();
             }
+            foreach (Editor editor in editors) {
+                editor.DrawUI();
+            }
         }
         if (nodeSelected.actualized) {
             UI.HSeparator();

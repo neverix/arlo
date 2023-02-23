@@ -4,6 +4,7 @@ using System;
 
 interface Editor {
     string name { get; }
+    void DrawUI() { }
     Task<string> Edit(string initialText, Action<string> setText);
 }
 
