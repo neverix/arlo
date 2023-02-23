@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Linq;
 using StereoKit;
 
@@ -77,11 +78,12 @@ class MenuSK : MenuUI<NodeSK> {
                 if (index > 0) UI.SameLine();
                 if (UI.Button(editor.name)) {
                     editorActive = true;
-                    editor.Edit(string.Join("", textChunks), (string newText) => {
-                        nodeSelected.text = newText;
-                    }).ContinueWith(text => {
+                    Task.Run(async () => {
+                        string text = await editor.Edit(string.Join("", textChunks), (string newText) => {
+                            nodeSelected.text = newText;
+                        });
                         editorActive = false;
-                        NodeSK? baby = nodeSelected.Actualize(nodeSelected.text + text.Result);
+                        NodeSK? baby = nodeSelected.Actualize(nodeSelected.text + text);
                         if (baby != null)
                             nodeSelected = baby;
                     });

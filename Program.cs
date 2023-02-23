@@ -19,7 +19,6 @@ class Program {
         Editor vui = new VUI();
         MenuSK menu = new MenuSK { pose = new Pose(0.3f, 0.2f, -0.4f, Quat.LookDir(0, 0, 1)), editors = new Editor[] { completer, vui } };
 
-        Console.WriteLine(Microphone.GetDevices());
         SK.Run(() => {
             // UI.WindowBegin("Main window", ref windowPose, new Vec2(50, 0) * U.cm, UIWin.Normal);
             // UI.Text("Hello world");
