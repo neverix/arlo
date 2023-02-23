@@ -12,13 +12,15 @@ class VUI : Editor {
     public string name { get { return "Record voice"; } }
     bool isActive = false;
     List<float> samples = new List<float>();
+    int transcribeEvery = 5 * 48000;
+    int transcribedChunks = 0;
     MyWhisperAPIClient whisperAPIClient = new MyWhisperAPIClient();
 
     public void DrawUI() {
         if (isActive) {
             UI.HSeparator();
             if (!Microphone.IsRecording) {
-                UI.Label("Starting...");
+                UI.Label("Wait...");
                 return;
             }
             if (UI.Button("Stop"))
@@ -28,6 +30,7 @@ class VUI : Editor {
 
     public async Task<string> Edit(string initialText, Action<string> setText) {
         isActive = true;
+        transcribedChunks = 0;
         await Task.Run(() => Microphone.Start());
         samples.Clear();
         float[] buf = new float[24000];
@@ -35,11 +38,17 @@ class VUI : Editor {
             int unreadSamples = Microphone.Sound.UnreadSamples;
             int readSamples = Microphone.Sound.ReadSamples(ref buf);
             samples.AddRange(buf[0..readSamples]);
-            if (unreadSamples > readSamples)
+            if (unreadSamples > readSamples) {
+                if ((transcribedChunks + 1) * transcribeEvery - samples.Count < 0) {
+                    setText(initialText + await TranscribeAudio());
+                    transcribedChunks++;
+                }
                 await Task.Delay(300);
+            }
         }
         Microphone.Stop();
         string result = await TranscribeAudio();
+        setText(initialText);
         return result;
     }
 
