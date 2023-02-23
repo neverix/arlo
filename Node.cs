@@ -43,8 +43,8 @@ class NodeSK : Node<NodeSK> {
         }
     }
     NodeSK AddBaby() {
-        // Quat orientation = Quat.Identity;  // MathUtils.RandomQuaternion();  // pose.orientation;
-        Vec3 offset = 0.01f * (parent == null ? new Vec3(-1, 0, 0) : pose.position - parent.pose.position);
+        Quat orientation = Quat.Identity;  // MathUtils.RandomQuaternion();  // pose.orientation;
+        Vec3 offset = 0.01f * (parent == null ? orientation.Rotate(new Vec3(-1, 0, 0)) : pose.position - parent.pose.position);
         NodeSK node = new NodeSK(actualized: false) {
             pose = new Pose(pose.position + offset, pose.orientation),  // orientation.Rotate(new Vec3(-0.01f, 0.0f, 0.0f)), orientation),
             parent = this,
@@ -56,7 +56,11 @@ class NodeSK : Node<NodeSK> {
     public NodeSK Actualize(string text) {
         this.text = text;
         actualized = true;
-        return AddBaby();
+        NodeSK baby = AddBaby();
+        if (parent != null) {
+            parent.AddBaby();
+        }
+        return baby;
     }
     public void Step(MenuUI<NodeSK> menu) {
         bool isHandled = UI.HandleBegin("Node", ref pose, mesh.Bounds, drawHandle: false, UIMove.FaceUser);
@@ -78,8 +82,7 @@ class NodeSK : Node<NodeSK> {
             float target = targetLength;
             while (node != null) {
                 Vec3 offset = node.pose.position - pose.position;
-                double x;
-                x = offset.Length - target;
+                double x = offset.Length - target;
                 if (x < 0) {
                     double inv = 1 / (1 + x / target) - 1;
                     x = Math.Sign(x) * inv * inv;
@@ -91,6 +94,20 @@ class NodeSK : Node<NodeSK> {
                 node = node.parent;
                 interations++;
                 target += targetLength;
+            }
+            if (parent != null) {
+                target = targetLength / 2f;  // TODO better repulsion constant
+                foreach (NodeSK c in parent.children) {
+                    if (c == this) continue;
+                    Vec3 offset = c.pose.position - pose.position;
+                    double x = offset.Length - target;
+                    if (x < 0) {
+                        double inv = 1 / (1 + x / target) - 1;
+                        x = Math.Sign(x) * inv * inv;
+                    }
+                    else continue;
+                    acc += offset * (float)(x) * springiness;
+                }
             }
             acc += (-vel) * damping;
             vel += acc * Time.Elapsedf;

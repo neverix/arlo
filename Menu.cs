@@ -85,7 +85,7 @@ class MenuSK : MenuUI<NodeSK> {
                         nodeSelected.text = newText;
                     }).ContinueWith(text => {
                         editorActive = false;
-                        nodeSelected = nodeSelected.Actualize(text.Result);
+                        nodeSelected = nodeSelected.Actualize(nodeSelected.text + text.Result);
                     });
                 }
             }
