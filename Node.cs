@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using StereoKit;
 using System;
 
@@ -8,6 +9,7 @@ class Node<T> where T : Node<T> {
     public List<Node<T>> children = new List<Node<T>>();
     public T? parent;
     public bool actualized = false;
+    public int actualizedChildren { get { return children.Where(c => c.actualized).Count(); } }
 
     public void Delete() {
         Delete(deleteSelf: true);
@@ -53,13 +55,14 @@ class NodeSK : Node<NodeSK> {
         children.Add(node);
         return node;
     }
-    public NodeSK Actualize(string text) {
+    public NodeSK? Actualize(string text) {
         this.text = text;
         actualized = true;
-        NodeSK baby = AddBaby();
-        if (parent != null) {
+        NodeSK? baby = null;
+        if (actualizedChildren == children.Count())
+            baby = AddBaby();
+        if (parent != null && parent.actualizedChildren == parent.children.Count())
             parent.AddBaby();
-        }
         return baby;
     }
     public void Step(MenuUI<NodeSK> menu) {

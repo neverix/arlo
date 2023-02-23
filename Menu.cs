@@ -69,29 +69,25 @@ class MenuSK : MenuUI<NodeSK> {
         // };
         UI.Text(string.Join("", textChunks));
 
-        if (nodeSelected.children.Where(c => c.actualized).Count() == 0) {
+        if (nodeSelected.actualizedChildren == 0) {
             UI.HSeparator();
             bool syncEditorActive = editorActive;
-            if (syncEditorActive) {
-                TextStyle ts = Text.MakeStyle(Default.Font, TextStyle.Default.CharHeight, new Color { r = 55, g = 55, b = 55, a = 255 });
-                UI.PushTextStyle(ts);
-            }
+            UI.PushEnabled(!syncEditorActive);
             foreach (var (editor, index) in editors.WithIndex()) {
                 if (index > 0) UI.SameLine();
                 if (UI.Button(editor.name)) {
-                    if (editorActive) continue;
                     editorActive = true;
                     editor.Edit(string.Join("", textChunks), (string newText) => {
                         nodeSelected.text = newText;
                     }).ContinueWith(text => {
                         editorActive = false;
-                        nodeSelected = nodeSelected.Actualize(nodeSelected.text + text.Result);
+                        NodeSK? baby = nodeSelected.Actualize(nodeSelected.text + text.Result);
+                        if (baby != null)
+                            nodeSelected = baby;
                     });
                 }
             }
-            if (syncEditorActive) {
-                UI.PopTextStyle();
-            }
+            UI.PopEnabled();
             foreach (Editor editor in editors) {
                 editor.DrawUI();
             }

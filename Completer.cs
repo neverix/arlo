@@ -12,6 +12,7 @@ class DummyCompleter : Completer {
     }
 
     public async Task<string> GetCompletion(string prefix) {
+        await Task.Delay(1000);
         return text;
     }
 }
