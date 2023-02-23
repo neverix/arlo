@@ -89,7 +89,6 @@ class MyWhisperAPIClient {
         }
         if (!response.IsSuccessStatusCode) {
             return " The audio transcription server is responding with an error. Check it and rerun.";
-            // throw new HttpRequestException();
         }
         JsonNode node = JsonNode.Parse(await response.Content.ReadAsStreamAsync())!;
         return ((string)node["result"]!);
